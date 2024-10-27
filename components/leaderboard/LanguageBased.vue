@@ -48,6 +48,7 @@ export default {
         router.replace({
           path: route.path,
           query: {
+            seasonButton: route.query.seasonButton,
             selectedButton: 0,
             selectedLanguage: newValue,
           },

@@ -777,6 +777,8 @@
     "ChallengeBased": "Challenge Based",
     "LanguageBased": "Coding Language Based",
     "SeasonalBased": "Seasonal Based",
+    "Season": "Season",
+    "AllTime": "All Time",
     "Report": "Report",
     "Video": "Video",
     "Quiz": "Quiz",

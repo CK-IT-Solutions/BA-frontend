@@ -23,6 +23,11 @@
     class="grid-auto gap-card container min pb-container pt-container grid-rows-[auto_auto_1fr]"
   >
     <InputButtonToggle
+      :buttonOptions="seasonButtonOptions"
+      v-model="seasonbutton"
+      class="mb-4"
+    />
+    <InputButtonToggle
       :buttonOptions="buttonOptions"
       v-model="selectedbutton"
     />
@@ -65,13 +70,19 @@ export default {
     const selectedbutton: any = ref(
       localStorage.getItem("selectedButtonLeaderBoard") ?? 0
     );
+    const seasonbutton: any = ref(
+      localStorage.getItem("seasonButtonLeaderBoard") ?? 0
+    );
     const router = useRouter();
     const route = useRoute();
     let buttonOptions: any = [
-      // { name: "Buttons.SeasonalBased" },
       { name: "Buttons.LanguageBased" },
       { name: "Buttons.ChallengeBased" },
       { name: "Buttons.Overall" },
+    ];
+    let seasonButtonOptions: any = [
+      { name: "Buttons.Season" },
+      { name: "Buttons.AllTime" },
     ];
 
     watch(
@@ -81,6 +92,7 @@ export default {
         router.replace({
           path: route.path,
           query: {
+            seasonButton: seasonbutton.value,
             selectedButton: selectedbutton.value,
           },
         });
@@ -91,7 +103,25 @@ export default {
       localStorage.removeItem("selectedButtonLeaderBoard");
     });
 
-    return { buttonOptions, selectedbutton, t, leaderBoardList, loading };
+    watch(
+      () => seasonbutton.value,
+      (newValue: any, oldValue) => {
+        localStorage.setItem("seasonButtonLeaderBoard", newValue);
+        router.replace({
+          path: route.path,
+          query: {
+            seasonButton: seasonbutton.value,
+            selectedButton: selectedbutton.value,
+          },
+        });
+      },
+      { immediate: true }
+    );
+    onUnmounted(() => {
+      localStorage.removeItem("seasonButtonLeaderBoard");
+    });
+
+    return { buttonOptions, selectedbutton, seasonButtonOptions, seasonbutton, t, leaderBoardList, loading };
   },
 };
 </script>

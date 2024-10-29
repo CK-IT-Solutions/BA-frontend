@@ -42,13 +42,24 @@
 
     <LeaderboardLanguageBased
       :leaderBoardList="leaderBoardList"
-      v-if="selectedbutton == 0 && !loading"
+      v-if="selectedbutton == 0 && !loading && seasonbutton == 0"
+    />
+    <LeaderboardLanguageBased
+      :leaderBoardList="leaderBoardList"
+      v-if="selectedbutton == 0 && !loading && seasonbutton == 1"
+    />
+
+    <LeaderboardChallengeBased
+      :leaderBoardList="leaderBoardList"
+      v-else-if="selectedbutton == 1 && !loading && seasonbutton == 0"
     />
     <LeaderboardChallengeBased
       :leaderBoardList="leaderBoardList"
-      v-else-if="selectedbutton == 1 && !loading"
+      v-else-if="selectedbutton == 1 && !loading && seasonbutton == 1"
     />
-    <LeaderboardOverall v-else-if="selectedbutton == 2 && !loading" />
+
+    <LeaderboardOverall v-else-if="selectedbutton == 2 && !loading && seasonbutton == 0" />
+    <LeaderboardOverall v-else-if="selectedbutton == 2 && !loading && seasonbutton == 1" />
   </main>
 </template>
 
@@ -70,9 +81,7 @@ export default {
     const selectedbutton: any = ref(
       localStorage.getItem("selectedButtonLeaderBoard") ?? 0
     );
-    const seasonbutton: any = ref(
-      localStorage.getItem("seasonButtonLeaderBoard") ?? 0
-    );
+    const seasonbutton: any = useSeason(parseInt(localStorage.getItem("seasonButtonLeaderBoard") ?? "0"));
     const router = useRouter();
     const route = useRoute();
     let buttonOptions: any = [
@@ -92,7 +101,6 @@ export default {
         router.replace({
           path: route.path,
           query: {
-            seasonButton: seasonbutton.value,
             selectedButton: selectedbutton.value,
           },
         });
@@ -107,13 +115,6 @@ export default {
       () => seasonbutton.value,
       (newValue: any, oldValue) => {
         localStorage.setItem("seasonButtonLeaderBoard", newValue);
-        router.replace({
-          path: route.path,
-          query: {
-            seasonButton: seasonbutton.value,
-            selectedButton: selectedbutton.value,
-          },
-        });
       },
       { immediate: true }
     );

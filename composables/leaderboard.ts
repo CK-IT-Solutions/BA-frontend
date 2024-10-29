@@ -240,6 +240,8 @@ export const useOverAllLeaderboardList = () =>
 export const useTotalLeaderboardUsers = () =>
   useState("totalLeaderboardUsers", () => 0);
 
+export const useSeason = (input?: number) =>
+  useState("season", () => input ?? 0);
 
 export const useLeaderboardLimit = () => useState("leaderboardLimit", () => 10);
 export const useLeaderboardOffset = () =>
@@ -247,20 +249,26 @@ export const useLeaderboardOffset = () =>
 
 export async function getLanguageLeaderboard(language: string, offset: any) {
   try {
-    const limit = useLeaderboardLimit();
-    const languageLeaderboardList = useLanguageLeaderboardList();
+    const season = useSeason();
+    if (season.value == 0){
+      const languageLeaderboardList = useLanguageLeaderboardList();
+      languageLeaderboardList.value = [];
+    } else if (season.value == 1){
+      const limit = useLeaderboardLimit();
+      const languageLeaderboardList = useLanguageLeaderboardList();
 
-    console.log("limit", limit.value)
-    const response = await GET(
-      `/challenges/leaderboard/by-language/${language}?limit=${limit.value}&offset=${offset}`
-    );
+      console.log("limit", limit.value)
+      const response = await GET(
+        `/challenges/leaderboard/by-language/${language}?limit=${limit.value}&offset=${offset}`
+      );
 
-    const totalLeaderboardUsers = useTotalLeaderboardUsers()
-    totalLeaderboardUsers.value = response?.total ?? 0
-    let arr: any = response?.leaderboard ?? []
-    arr = [...languageLeaderboardList.value, ...arr]
-    languageLeaderboardList.value = arr
-    return [response, null];
+      const totalLeaderboardUsers = useTotalLeaderboardUsers()
+      totalLeaderboardUsers.value = response?.total ?? 0
+      let arr: any = response?.leaderboard ?? []
+      arr = [...languageLeaderboardList.value, ...arr]
+      languageLeaderboardList.value = arr
+      return [response, null];
+    }
   } catch (error: any) {
     let msg = error?.data?.error
     if (msg == "unverified") {
@@ -273,21 +281,26 @@ export async function getLanguageLeaderboard(language: string, offset: any) {
 
 export async function getCodingChallengeLeaderboard(codingChallengeId: string, offset: any) {
   try {
-    const limit = useLeaderboardLimit();
-    const codingChallengeLeaderboardList = useCodingChallengeLeaderboardList();
-    const totalLeaderboardUsers = useTotalLeaderboardUsers()
+    const season = useSeason();
+    if (season.value == 0){
+      const codingChallengeLeaderboardList = useCodingChallengeLeaderboardList();
+      codingChallengeLeaderboardList.value = [];
+    } else if (season.value == 1){
+      const limit = useLeaderboardLimit();
+      const codingChallengeLeaderboardList = useCodingChallengeLeaderboardList();
+      const totalLeaderboardUsers = useTotalLeaderboardUsers()
 
+      const response = await GET(
+        `/challenges/leaderboard/by-task/${codingChallengeId}?limit=${limit.value}&offset=${offset}`
+      );
 
-    const response = await GET(
-      `/challenges/leaderboard/by-task/${codingChallengeId}?limit=${limit.value}&offset=${offset}`
-    );
-
-    totalLeaderboardUsers.value = response?.total ?? 0
-    console.log("response leaderboard", response);
-    let arr: any = response?.leaderboard ?? []
-    arr = [...codingChallengeLeaderboardList.value, ...arr]
-    codingChallengeLeaderboardList.value = arr
-    return [response, null];
+      totalLeaderboardUsers.value = response?.total ?? 0
+      console.log("response leaderboard", response);
+      let arr: any = response?.leaderboard ?? []
+      arr = [...codingChallengeLeaderboardList.value, ...arr]
+      codingChallengeLeaderboardList.value = arr
+      return [response, null];
+    }
   } catch (error: any) {
     let msg = error?.data?.error
     if (msg == "unverified") {
@@ -300,17 +313,23 @@ export async function getCodingChallengeLeaderboard(codingChallengeId: string, o
 
 export async function getOverAllLeaderBoard(offset: any) {
   try {
-    const limit = useLeaderboardLimit();
-    const overAllLeaderboardList = useOverAllLeaderboardList();
-    const totalLeaderboardUsers = useTotalLeaderboardUsers()
+    const season = useSeason();
+    if (season.value == 0){
+      const overAllLeaderboardList = useOverAllLeaderboardList();
+      overAllLeaderboardList.value = [];
+    } else if (season.value == 1){
+      const limit = useLeaderboardLimit();
+      const overAllLeaderboardList = useOverAllLeaderboardList();
+      const totalLeaderboardUsers = useTotalLeaderboardUsers()
 
-    const response = await GET(`/challenges/leaderboard?limit=${limit.value}&offset=${offset}`);
-    let arr: any = response?.leaderboard ?? []
-    console.log("response leaderboard oveall", response);
-    totalLeaderboardUsers.value = response?.total ?? 0
-    arr = [...overAllLeaderboardList.value, ...arr]
-    overAllLeaderboardList.value = arr;
-    return [response, null];
+      const response = await GET(`/challenges/leaderboard?limit=${limit.value}&offset=${offset}`);
+      let arr: any = response?.leaderboard ?? []
+      console.log("response leaderboard oveall", response);
+      totalLeaderboardUsers.value = response?.total ?? 0
+      arr = [...overAllLeaderboardList.value, ...arr]
+      overAllLeaderboardList.value = arr;
+      return [response, null];
+    }
   } catch (error: any) {
     let msg = error?.data?.error
     if (msg == "unverified") {

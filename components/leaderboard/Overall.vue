@@ -18,6 +18,7 @@ export default {
     const loading = ref(true);
     const offset = useLeaderboardOffset();
     const leaderBoardList = useOverAllLeaderboardList();
+
     onMounted(async () => {
       offset.value = 0;
       await getOverAllLeaderBoard(offset.value);

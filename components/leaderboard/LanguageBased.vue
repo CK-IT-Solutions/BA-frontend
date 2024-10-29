@@ -25,7 +25,7 @@ import { useI18n } from "vue-i18n";
 export default {
   setup() {
     const { t } = useI18n();
-    const selectedLanguage: any = ref("python");
+    const selectedLanguage: any = ref(localStorage.getItem("selectedLanguageLeaderBoard") ?? "python");
     const leaderBoardList = useLanguageLeaderboardList();
     const loading = ref(true);
     const environments: any = useEnvironments();
@@ -42,13 +42,13 @@ export default {
       () => selectedLanguage.value,
       async (newValue) => {
         const router = useRouter();
-        leaderBoardList.value = [];
         const route = useRoute();
-
+        leaderBoardList.value = [];
+        localStorage.setItem("selectedLanguageLeaderBoard", newValue);
+        
         router.replace({
           path: route.path,
           query: {
-            seasonButton: route.query.seasonButton,
             selectedButton: 0,
             selectedLanguage: newValue,
           },

@@ -22,6 +22,7 @@ export default {
     const loading = ref(true);
     const offset = useLeaderboardOffset();
     const codingChallengeLeaderboardList = useCodingChallengeLeaderboardList();
+
     onMounted(async () => {
       console.log("id", props.challengeId);
       offset.value = 0;
